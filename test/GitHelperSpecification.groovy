@@ -68,7 +68,7 @@ class GitHelperSpecification extends BasePipelineSpecification {
         script.call(name: "Jenkins", email: "<>", path: TEMP_GIT_DIRECTORY.toAbsolutePath().toString()) {
             GitHelper gitHelper ->
                 actualTagsAsStrings.addAll(gitHelper
-                        .sortedSemanticTags
+                        .semanticTagsInRepo
                         .stream()
                         .map { tag -> tag.toString() }
                         .collect(Collectors.toList())
@@ -86,7 +86,7 @@ class GitHelperSpecification extends BasePipelineSpecification {
 
         when:
         script.call(name: "Jenkins", email: "<>", path: TEMP_NON_GIT_DIRECTORY.toAbsolutePath().toString()) {
-            GitHelper gitHelper -> gitHelper.sortedSemanticTags
+            GitHelper gitHelper -> gitHelper.semanticTagsInRepo
         }
 
         then:
