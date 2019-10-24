@@ -1,7 +1,7 @@
 import com.connexta.ci.jenkins.pipeline.constants.SemanticVersionTag
 import support.BasePipelineSpecification
 
-class SemanticVersionTagSpecification extends BasePipelineSpecification {
+class SemanticVersionSpecification extends BasePipelineSpecification {
     def static final MIN = Integer.MIN_VALUE
     def static final MAX = Integer.MAX_VALUE
 
