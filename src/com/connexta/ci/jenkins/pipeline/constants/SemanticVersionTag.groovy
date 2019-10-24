@@ -1,5 +1,7 @@
 package com.connexta.ci.jenkins.pipeline.constants
 
+import com.cloudbees.groovy.cps.NonCPS
+
 class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable {
     private static String XY_SEMVER = /^(\d+)\.(\d+)$/
     private static String XYZ_SEMVER = /^(\d+)\.(\d+)\.(\d+)$/
@@ -34,6 +36,7 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
         this.w = w
     }
 
+    @NonCPS
     static SemanticVersionTag fromString(final String tag) throws IllegalArgumentException {
         Integer x, y, z, w
 
