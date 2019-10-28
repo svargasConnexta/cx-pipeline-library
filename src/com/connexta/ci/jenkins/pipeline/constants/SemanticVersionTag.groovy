@@ -19,15 +19,15 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
 
     SemanticVersionTag(Integer x, Integer y, Integer z, Integer w) {
         if (x == null) {
-            throw new IllegalArgumentException("X is required.")
+            throw new IllegalArgumentException("X (major version) is required.")
         }
 
         if (y == null) {
-            throw new IllegalArgumentException("Y is required.")
+            throw new IllegalArgumentException("Y (minor version) is required.")
         }
 
         if (x < 0 || y < 0 || (z != null && z < 0) || (w != null && w < 0)) {
-            throw new IllegalArgumentException("X or Y or Z or W was < 0. Only positive integers allowed.")
+            throw new IllegalArgumentException("x=${x}, y=${y}, z=${z}, w=${w}. Only positive integers allowed.")
         }
 
         this.x = x
@@ -123,5 +123,21 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
         }
 
         return result.toString()
+    }
+
+    int getMajor() {
+        return this.x
+    }
+
+    int getMinor() {
+        return this.y
+    }
+
+    int getPatch() {
+        return this.z == null ? 0 : this.z
+    }
+
+    int getBuild() {
+        return this.w == null ? 0 : this.w
     }
 }
