@@ -112,14 +112,14 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
     }
 
     String toString() {
-        final StringBuilder result = new StringBuilder("${x}.${y}")
+        String result = "${x}.${y}"
 
         if (z != null) {
-            result.append(".${z}")
+            result += ".${z}"
         }
 
         if (w != null) {
-            result.append(".${w}")
+            result += ".${w}"
         }
 
         return result.toString()
