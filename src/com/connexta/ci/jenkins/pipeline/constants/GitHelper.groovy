@@ -24,7 +24,7 @@ class GitHelper {
         final def isBareDirectory = gitRepo.getRepository().isBare()
         final def isInvalidGitRepo = !isBareDirectory && !atLeastOneValidRef
         if (isInvalidGitRepo) {
-            throw new IllegalStateException("${pathToLocalGitRepo} is NOT a valid git repo")
+            throw new GroovyRuntimeException("${pathToLocalGitRepo} is NOT a valid git repo")
         }
         gitRepo.close()
     }
@@ -44,7 +44,7 @@ class GitHelper {
                 SemanticVersionTag maybeTag = null
                 try {
                     maybeTag = SemanticVersionTag.fromString(name)
-                } catch (IllegalArgumentException ignored) {
+                } catch (GroovyRuntimeException ignored) {
                 }
                 if (maybeTag != null) {
                     result.add(maybeTag)

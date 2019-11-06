@@ -90,7 +90,7 @@ class GitHelperSpecification extends BasePipelineSpecification {
         }
 
         then:
-        thrown(IllegalStateException)
+        thrown(GroovyRuntimeException)
     }
 
     def cleanupSpec() {

@@ -19,15 +19,15 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
 
     SemanticVersionTag(Integer x, Integer y, Integer z, Integer w) {
         if (x == null) {
-            throw new IllegalArgumentException("X (major version) is required.")
+            throw new GroovyRuntimeException("X (major version) is required.")
         }
 
         if (y == null) {
-            throw new IllegalArgumentException("Y (minor version) is required.")
+            throw new GroovyRuntimeException("Y (minor version) is required.")
         }
 
         if (x < 0 || y < 0 || (z != null && z < 0) || (w != null && w < 0)) {
-            throw new IllegalArgumentException("x=${x}, y=${y}, z=${z}, w=${w}. Only positive integers allowed.")
+            throw new GroovyRuntimeException("x=${x}, y=${y}, z=${z}, w=${w}. Only positive integers allowed.")
         }
 
         this.x = x
@@ -64,7 +64,7 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
             return new SemanticVersionTag(x, y, null, null)
         }
 
-        throw new IllegalArgumentException("Invalid Semantic Tag: " + tag)
+        throw new GroovyRuntimeException("Invalid Semantic Tag: " + tag)
     }
 
     SemanticVersionTag incrementLeastSignificantDigit() {
