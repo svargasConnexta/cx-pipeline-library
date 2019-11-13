@@ -5,12 +5,12 @@ class SemanticVersionSpecification extends BasePipelineSpecification {
     def static final MIN = Integer.MIN_VALUE
     def static final MAX = Integer.MAX_VALUE
 
-    def "GroovyRuntimeException on invalid constructor arguments"() {
+    def "IllegalArgumentException on invalid constructor arguments"() {
         when:
         new SemanticVersionTag(x, y, z, w)
 
         then:
-        thrown(GroovyRuntimeException)
+        thrown(IllegalArgumentException)
 
         where:
         x                 | y    | z  | w
@@ -24,12 +24,12 @@ class SemanticVersionSpecification extends BasePipelineSpecification {
         -1                | -9   | -9 | -5
     }
 
-    def "GroovyRuntimeException on invalid string argument"() {
+    def "IllegalArgumentException on invalid string argument"() {
         when:
         SemanticVersionTag.fromString(tag)
 
         then:
-        thrown(GroovyRuntimeException)
+        thrown(IllegalArgumentException)
 
         where:
         tag                           | _
@@ -130,7 +130,7 @@ class SemanticVersionSpecification extends BasePipelineSpecification {
     def "Tag flooring truncates z and w build numbers"() {
         when:
         final def t = new SemanticVersionTag(x, y, z, w)
-                .floorToXYTag()
+                .normalizeToXYTag()
                 .toString()
 
         then:

@@ -14,28 +14,30 @@ class GitHelper {
         this.authorName = authorName
         this.authorEmail = authorEmail
         this.pathToLocalGitRepo = pathToLocalGitRepo
-        assertIsValidGitRepo(pathToLocalGitRepo)
+        if (!isValidGitRepo(pathToLocalGitRepo)) {
+            throw new IllegalStateException("Path: ${pathToLocalGitRepo} is NOT a valid git repo!")
+        }
     }
 
     @NonCPS
-    static void assertIsValidGitRepo(final String pathToLocalGitRepo)  {
+    static boolean isValidGitRepo(final String pathToLocalGitRepo)  {
         final def gitRepo = new Git(new FileRepositoryBuilder<>().setWorkTree(new File(pathToLocalGitRepo)).build())
         final def atLeastOneValidRef = gitRepo.getRepository().getRefDatabase().getRefs().any { it != null }
         final def isBareDirectory = gitRepo.getRepository().isBare()
-        final def isInvalidGitRepo = !isBareDirectory && !atLeastOneValidRef
-        if (isInvalidGitRepo) {
-            throw new GroovyRuntimeException("${pathToLocalGitRepo} is NOT a valid git repo")
+        final def isValidGitRepo = isBareDirectory || atLeastOneValidRef
+        try {
+            return isValidGitRepo
+        } finally {
+            gitRepo.close()
         }
-        gitRepo.close()
     }
 
-    /**
-     * TODO: Tags are NOT returned in any guaranteed order because calling .sort() or Collections.sort()
-     *       breaks Groovy the Jenkins Unittest Pipeline for some reason
-     */
     @NonCPS
     List<SemanticVersionTag> getSemanticTagsInRepo() {
-        assertIsValidGitRepo(pathToLocalGitRepo)
+        if (!isValidGitRepo(pathToLocalGitRepo)) {
+            return []
+        }
+
         final List<SemanticVersionTag> result = new ArrayList()
         final def gitRepo = new Git(new FileRepositoryBuilder<>().setWorkTree(new File(pathToLocalGitRepo)).build())
         try {
@@ -44,7 +46,7 @@ class GitHelper {
                 SemanticVersionTag maybeTag = null
                 try {
                     maybeTag = SemanticVersionTag.fromString(name)
-                } catch (GroovyRuntimeException ignored) {
+                } catch (IllegalArgumentException ignored) {
                 }
                 if (maybeTag != null) {
                     result.add(maybeTag)

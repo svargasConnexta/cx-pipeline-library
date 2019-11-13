@@ -65,7 +65,7 @@ class GitHelperSpecification extends BasePipelineSpecification {
 
         when:
         GitHelper capturedHelper = null
-        script.call(name: "Jenkins", email: "<>", path: TEMP_GIT_DIRECTORY.toAbsolutePath().toString()) {
+        script.call(path: TEMP_GIT_DIRECTORY.toAbsolutePath().toString()) {
             GitHelper gitHelper ->
                 actualTagsAsStrings.addAll(gitHelper
                         .semanticTagsInRepo
@@ -90,7 +90,7 @@ class GitHelperSpecification extends BasePipelineSpecification {
         }
 
         then:
-        thrown(GroovyRuntimeException)
+        thrown(IllegalStateException)
     }
 
     def cleanupSpec() {

@@ -19,15 +19,15 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
 
     SemanticVersionTag(Integer x, Integer y, Integer z, Integer w) {
         if (x == null) {
-            throw new GroovyRuntimeException("X (major version) is required.")
+            throw new IllegalArgumentException("Major version (x) required.")
         }
 
         if (y == null) {
-            throw new GroovyRuntimeException("Y (minor version) is required.")
+            throw new IllegalArgumentException("Minor version (y) required.")
         }
 
         if (x < 0 || y < 0 || (z != null && z < 0) || (w != null && w < 0)) {
-            throw new GroovyRuntimeException("x=${x}, y=${y}, z=${z}, w=${w}. Only positive integers allowed.")
+            throw new IllegalArgumentException("x=${x}, y=${y}, z=${z}, w=${w}, all numbers must be positive")
         }
 
         this.x = x
@@ -37,7 +37,7 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
     }
 
     @NonCPS
-    static SemanticVersionTag fromString(final String tag) throws IllegalArgumentException {
+    static SemanticVersionTag fromString(final String tag) {
         Integer x, y, z, w
 
         def xyzwMatch = tag =~ XYZW_SEMVER
@@ -64,7 +64,7 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
             return new SemanticVersionTag(x, y, null, null)
         }
 
-        throw new GroovyRuntimeException("Invalid Semantic Tag: " + tag)
+        throw new IllegalArgumentException("Invalid tag: ${tag}")
     }
 
     SemanticVersionTag incrementLeastSignificantDigit() {
@@ -91,7 +91,19 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
         return new SemanticVersionTag(x, y, 0, 0)
     }
 
-    SemanticVersionTag floorToXYTag() {
+    SemanticVersionTag normalizeToXYZTag() {
+        if (w == null) {
+            return this
+        }
+
+        if (z == null) {
+            return new SemanticVersionTag(x, y, 0, 0)
+        }
+
+        return new SemanticVersionTag(x, y, z, 0)
+    }
+
+    SemanticVersionTag normalizeToXYTag() {
         if (z == null && w == null) {
             return this
         }
@@ -125,6 +137,38 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
         return result.toString()
     }
 
+    SemanticVersionTag incrementMajor() {
+        return new SemanticVersionTag(x + 1, y, z, w)
+    }
+
+    SemanticVersionTag incrementMinor() {
+        return new SemanticVersionTag(x, y + 1, z, w)
+    }
+
+    SemanticVersionTag incrementPatch() {
+        return new SemanticVersionTag(x, y, z == null ? 1 : z + 1, w)
+    }
+
+    SemanticVersionTag incrementBuild() {
+        return new SemanticVersionTag(x, y, z, w == null ? 1 : w + 1)
+    }
+
+    SemanticVersionTag incrementX() {
+        return incrementMajor()
+    }
+
+    SemanticVersionTag incrementY() {
+        return incrementMinor()
+    }
+
+    SemanticVersionTag incrementZ() {
+        return incrementPatch()
+    }
+
+    SemanticVersionTag incrementW() {
+        return incrementBuild()
+    }
+
     int getMajor() {
         return this.x
     }
@@ -139,5 +183,21 @@ class SemanticVersionTag implements Comparable<SemanticVersionTag>, Serializable
 
     int getBuild() {
         return this.w == null ? 0 : this.w
+    }
+
+    boolean hasMajor() {
+        return true
+    }
+
+    boolean hasMinor()  {
+        return true
+    }
+
+    boolean hasPatch() {
+        return this.z != null
+    }
+
+    boolean hasBuild() {
+        return this.w != null
     }
 }
